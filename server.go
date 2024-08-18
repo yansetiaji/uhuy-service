@@ -71,7 +71,7 @@ func DBtoAPI(p *ProductDB) ProductAPI {
 	}
 }
 
-// Define custom data validator
+// Define custom data validator type and func
 // https://echo.labstack.com/docs/request#validate-data
 type CustomValidator struct {
 	validator *validator.Validate
@@ -155,7 +155,7 @@ func main() {
 	// Delete Product by ID
 	e.DELETE("/api/products/:id", deleteProductHandler)
 
-	e.Logger.Fatal(e.Start("localhost:8080"))
+	e.Logger.Fatal(e.Start(":8080"))
 }
 
 func validateProductAPI(c echo.Context, newProduct ProductAPI) error {
