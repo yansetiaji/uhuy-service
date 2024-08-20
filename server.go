@@ -2,12 +2,15 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 // Define ProductDB (for database / value integrity purpose)
@@ -95,6 +98,14 @@ type ResponseJSON struct {
 	Message string `json:"message"`
 }
 
+type PaginatedResponse struct {
+	Page              int          `json:"page"`
+	TotalReturnedData int          `json:"totalReturnedData"`
+	TotalLength       int          `json:"totalLength"`
+	TotalPages        int          `json:"totalPages"`
+	Values            []ProductAPI `json:"productsData"`
+}
+
 // Main function yuhuuu
 func main() {
 	// Dummy data initialization
@@ -102,7 +113,7 @@ func main() {
 		{
 			Id:          1,
 			Name:        "Galaxy Z Fold6",
-			Description: "The ultimate foldable powered by Galaxy AI",
+			Description: "The ultimate foldable powered by Galaxy AI The ultimate foldable powered by Galaxy AI The ultimate foldable powered by Galaxy AI The ultimate foldable powered by Galaxy AI The ultimate foldable powered by Galaxy AI The ultimate foldable powered by Galaxy AI ",
 			Price:       189999,
 		},
 		{
@@ -123,6 +134,96 @@ func main() {
 			Description: "Galaxy AI is here",
 			Price:       64999,
 		},
+		{
+			Id:          5,
+			Name:        "Galaxy Z Fold7",
+			Description: "The ultimate foldable powered by Galaxy AI",
+			Price:       189999,
+		},
+		{
+			Id:          6,
+			Name:        "Galaxy Z Flip7",
+			Description: "The power of Galaxy AI right in your pocket",
+			Price:       110000,
+		},
+		{
+			Id:          7,
+			Name:        "Galaxy S25 Ultra",
+			Description: "The new era of AI-enhanced smartphones",
+			Price:       129900,
+		},
+		{
+			Id:          8,
+			Name:        "Galaxy Watch Ultra 2",
+			Description: "Galaxy AI is here",
+			Price:       64999,
+		},
+		{
+			Id:          9,
+			Name:        "Galaxy S26 Ultra",
+			Description: "The new era of AI-enhanced smartphones",
+			Price:       129900,
+		},
+		{
+			Id:          10,
+			Name:        "Galaxy Watch Ultra 3",
+			Description: "Galaxy AI is here",
+			Price:       64999,
+		},
+		{
+			Id:          11,
+			Name:        "Galaxy Z Fold8",
+			Description: "The ultimate foldable powered by Galaxy AI",
+			Price:       189999,
+		},
+		{
+			Id:          12,
+			Name:        "Galaxy Z Flip9",
+			Description: "The power of Galaxy AI right in your pocket",
+			Price:       110000,
+		},
+		{
+			Id:          13,
+			Name:        "Galaxy S27 Ultra",
+			Description: "The new era of AI-enhanced smartphones",
+			Price:       129900,
+		},
+		{
+			Id:          14,
+			Name:        "Galaxy Watch Ultra 4",
+			Description: "Galaxy AI is here",
+			Price:       64999,
+		},
+		{
+			Id:          15,
+			Name:        "Galaxy Z Fold9",
+			Description: "The ultimate foldable powered by Galaxy AI",
+			Price:       189999,
+		},
+		{
+			Id:          16,
+			Name:        "Galaxy Z Flip9",
+			Description: "The power of Galaxy AI right in your pocket",
+			Price:       110000,
+		},
+		{
+			Id:          17,
+			Name:        "Galaxy S28 Ultra",
+			Description: "The new era of AI-enhanced smartphones",
+			Price:       129900,
+		},
+		{
+			Id:          18,
+			Name:        "Galaxy Watch Ultra 5",
+			Description: "Galaxy AI is here",
+			Price:       64999,
+		},
+		{
+			Id:          19,
+			Name:        "Galaxy S29 Ultra",
+			Description: "The new era of AI-enhanced smartphones",
+			Price:       129900,
+		},
 	}
 	// Dummy indicator
 	lastId = int64(len(products))
@@ -130,6 +231,15 @@ func main() {
 	// Create new echo instance
 	// https://echo.labstack.com/docs/quick-start
 	e := echo.New()
+
+	// Enable CORS
+	// https://echo.labstack.com/docs/middleware/cors
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:3000", "https://uhuy-ui.cicicuit.tech"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
+
+	e.Pre(middleware.RemoveTrailingSlash())s
 
 	// Bind custom validator that created before
 	// https://echo.labstack.com/docs/request#validate-data
@@ -146,8 +256,11 @@ func main() {
 	// Get Product by ID
 	e.GET("/api/products/:id", getProductByIdHandler)
 
-	// Get All Products
-	e.GET("/api/products", getAllProductsHandler)
+	// Get All Products Non Paginated
+	e.GET("/api/products-all", getAllProductsHandler)
+
+	// Get All Products Pagination
+	e.GET("/api/products", getAllProductsPaginationHandler)
 
 	// Update Prodcut by ID
 	e.PUT("/api/products/:id", updateProductHandler)
@@ -233,6 +346,72 @@ func getAllProductsHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, responseProducts)
 }
 
+func getAllProductsPaginationHandler(c echo.Context) error {
+	pageStr := c.QueryParam("page")
+	limitStr := c.QueryParam("limit")
+
+	// Default
+	page := 1
+	limit := 5
+
+	// Parse page parameter
+	if pageStr != "" {
+		parsedPage, err := strconv.Atoi(pageStr)
+		if err == nil && parsedPage > 0 {
+			page = parsedPage
+		}
+	}
+
+	// Parse limit parameter
+	if limitStr != "" {
+		parsedLimit, err := strconv.Atoi(limitStr)
+		if err == nil && parsedLimit > 0 {
+			limit = parsedLimit
+		}
+	}
+
+	// Calculate offset
+	offset := (page - 1) * limit
+
+	// Total Data
+	totalData := len(products)
+
+	// Validate data availability
+	var endQueryLimit int
+	var responseLength int
+	if offset > totalData {
+		r := &ResponseJSON{
+			Message: "Invalid page",
+		}
+		return c.JSON(http.StatusNotFound, r)
+	} else if offset+limit > totalData {
+		endQueryLimit = offset + totalData%limit
+		responseLength = totalData % limit
+	} else {
+		endQueryLimit = page * limit
+		responseLength = limit
+	}
+
+	// create slice of ProductAPI with specified length based on products count
+	responseProducts := make([]ProductAPI, responseLength)
+	// convert from ProductDB to ProductAPI for each product
+	j := 0
+	for i := offset; i < endQueryLimit; i++ {
+		responseProducts[j] = DBtoAPI(&products[i])
+		j++
+	}
+
+	paginatedResponse := PaginatedResponse{
+		Page:              page,
+		TotalLength:       totalData,
+		TotalReturnedData: responseLength,
+		TotalPages:        int(math.Ceil(float64(totalData) / float64(limit))),
+		Values:            responseProducts,
+	}
+
+	return c.JSON(http.StatusOK, paginatedResponse)
+}
+
 func updateProductHandler(c echo.Context) error {
 	id := c.Param("id")
 	// convert path param from string to int64
@@ -284,7 +463,7 @@ func deleteProductHandler(c echo.Context) error {
 	id := c.Param("id")
 	// convert path param from string to int64
 	// https://pkg.go.dev/strconv#ParseInt
-	idToRemove, err := strconv.ParseInt(id, 2, 64)
+	idToRemove, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		r := &ResponseJSON{
 			Message: "Invalid Product ID",

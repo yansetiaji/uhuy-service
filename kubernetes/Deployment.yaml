@@ -11,9 +11,9 @@ spec:
     metadata:
       labels:
         app: backend
-  spec:
-    containers:
-      - name: uhuy-service
-        image: yansetiaji/uhuy-service:v1
-        ports:
-          - containerPort: 8080
+    spec:
+      containers:
+        - name: uhuy-service
+          image: yansetiaji/uhuy-service:v0
+          ports:
+            - containerPort: 8080
