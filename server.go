@@ -235,7 +235,7 @@ func main() {
 	// Enable CORS
 	// https://echo.labstack.com/docs/middleware/cors
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:3000", "https://uhuy-ui.cicicuit.tech"},
+		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 
