@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
@@ -239,7 +238,7 @@ func main() {
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 
-	e.Pre(middleware.RemoveTrailingSlash())s
+	e.Pre(middleware.RemoveTrailingSlash())
 
 	// Bind custom validator that created before
 	// https://echo.labstack.com/docs/request#validate-data
