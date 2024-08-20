@@ -8,4 +8,4 @@ FROM alpine:latest
 WORKDIR /
 COPY --from=builder /app-build/server .
 EXPOSE 8080
-ENTRYPOINT ./server
+ENTRYPOINT ["./server"]
