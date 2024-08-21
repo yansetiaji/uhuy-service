@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: uhuy-service
-          image: yansetiaji/uhuy-service:v0
+          image: yansetiaji/uhuy-service:v1
           ports:
             - containerPort: 8080
