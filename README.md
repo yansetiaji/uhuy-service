@@ -116,6 +116,8 @@ kubectl create -f Ingress.yaml
 
 ![kube svc](./docs-assets/kube_ingress.png)
 
+Access via [Public link](#Public-Endpoint)
+
 
 ## Something may interest you
 
@@ -134,5 +136,3 @@ But on the frontend example is not using decimal places
 I just follow the complex one, applied both for backend and frontend. And for the safety financial calculations record (in case further processing / calculations needed) the price data is saved with `int64` file type intead of `float64`
 
 So I made a custom data type Decimal and different data model for API communications (price using `numerical`/`decimal`/`float64` with 2 digits precision) and (dummy) database purpose (price is using `int64`). [Check it here](https://github.com/yansetiaji/uhuy-service/blob/d57c744df458b48f01bcc9ca33956ec22ccaeb32/server.go#L15-L54)
-
-## K3S Deployment Visualized
