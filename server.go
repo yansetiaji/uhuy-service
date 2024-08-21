@@ -325,7 +325,8 @@ func getProductByIdHandler(c echo.Context) error {
 	// Check product existence
 	for _, product := range products {
 		if product.Id == idInt {
-			return c.JSON(http.StatusOK, product)
+			returnedProduct := DBtoAPI(&product)
+			return c.JSON(http.StatusOK, returnedProduct)
 		}
 	}
 	// Response data
