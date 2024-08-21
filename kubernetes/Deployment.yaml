@@ -15,5 +15,6 @@ spec:
       containers:
         - name: uhuy-service
           image: yansetiaji/uhuy-service:v1
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080

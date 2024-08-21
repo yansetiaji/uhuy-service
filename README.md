@@ -35,7 +35,7 @@ go build -o server ./server.go
 Build docker image:
 
 ```bash
-docker build -t uhuy-service:<tag> .
+docker build -t <username>/uhuy-service:<tag> .
 ```
 
 ![Build uhuy-service](./docs-assets/build_uhuy-service.png)
@@ -43,7 +43,7 @@ docker build -t uhuy-service:<tag> .
 Run containerized version on localhost:
 
 ```bash
-docker run -p 8080:8080 uhuy-service:<tag>
+docker run -p 8080:8080 <username>/uhuy-service:<tag>
 ```
 
 ## Kubernetes (K3S) Deployment Visualized
