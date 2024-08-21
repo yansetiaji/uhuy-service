@@ -136,7 +136,7 @@ I just follow the complex one, applied both for backend and frontend. And for th
 
 So I made a custom data type Decimal and different data model for API communications (price using `numerical`/`decimal`/`float64` with 2 digits precision) and (dummy) database purpose (price is using `int64`). [Check it here](https://github.com/yansetiaji/uhuy-service/blob/d57c744df458b48f01bcc9ca33956ec22ccaeb32/server.go#L15-L54)
 
-I made 2 version of get all products (paginated and non paginated), because it was no clear instruction on backend assignment (paginated or not)
+I made 2 version of get all products (paginated and non paginated), because it was no clear instruction on backend assignment (paginated or not), so I just followed the complex one (Paginated in example table).
 
 ```go
 // Healthcheck endpoint
