@@ -38,6 +38,8 @@ Build docker image:
 docker build -t uhuy-service:<tag> .
 ```
 
+![Build uhuy-service](./docs-assets/build_uhuy-service.png)
+
 Run containerized version on localhost:
 
 ```bash
@@ -62,6 +64,8 @@ Note: login required
 docker push <username>/uhuy-service:<tag>
 ```
 
+![Docker push uhuy-service](./docs-assets/push_uhuy-service.png)
+
 ### Let's go to kubernetes
 
 ```bash
@@ -71,7 +75,7 @@ cd ./kubernetes
 Create `uhuy` `namespace`. (Optional, you can use `default` `namespace` instead)
 
 ```bash
-kubectl apply -f Namespace.yaml
+kubectl create -f Namespace.yaml
 ```
 
 ![kubectl get namespace](./docs-assets/ss_namespace.png)
@@ -86,6 +90,32 @@ contexts:
     namespace: uhuy
   name: default
 ```
+
+### Create Deployment
+
+```bash
+kubectl create -f Deployment.yaml
+```
+
+![kube deployment](./docs-assets/kube_deployment.png)
+
+### Create Service
+
+```bash
+kubectl create -f Service-np.yaml
+kubectl create -f Service-ci.yaml
+```
+
+![kube svc](./docs-assets/kube_svc.png)
+
+### Create Ingress
+
+```bash
+kubectl create -f Ingress.yaml
+```
+
+![kube svc](./docs-assets/kube_ingress.png)
+
 
 ## Something may interest you
 
