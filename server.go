@@ -112,7 +112,7 @@ func main() {
 		{
 			Id:          1,
 			Name:        "Galaxy Z Fold6",
-			Description: "The ultimate foldable powered by Galaxy AI The ultimate foldable powered by Galaxy AI The ultimate foldable powered by Galaxy AI The ultimate foldable powered by Galaxy AI The ultimate foldable powered by Galaxy AI The ultimate foldable powered by Galaxy AI ",
+			Description: "The ultimate foldable powered by Galaxy AI",
 			Price:       189999,
 		},
 		{

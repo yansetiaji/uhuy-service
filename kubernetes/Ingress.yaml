@@ -3,6 +3,9 @@ kind: Ingress
 metadata:
   name: uhuy-service-ingress
 spec:
+  # tls:
+  #   - hosts:
+  #     - uhuy-service.cicicuit.tech
   rules:
     - host: uhuy-service.cicicuit.tech
       http:
@@ -11,6 +14,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: uhuy-service-service
+                name: uhuy-service-service-ci
                 port:
                   number: 8080
