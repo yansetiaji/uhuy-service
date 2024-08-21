@@ -116,8 +116,7 @@ kubectl create -f Ingress.yaml
 
 ![kube svc](./docs-assets/kube_ingress.png)
 
-Access via [Public link](#Public-Endpoint)
-
+Access via [Public Endpoint](#public-endpoint)
 
 ## Something may interest you
 
@@ -136,3 +135,54 @@ But on the frontend example is not using decimal places
 I just follow the complex one, applied both for backend and frontend. And for the safety financial calculations record (in case further processing / calculations needed) the price data is saved with `int64` file type intead of `float64`
 
 So I made a custom data type Decimal and different data model for API communications (price using `numerical`/`decimal`/`float64` with 2 digits precision) and (dummy) database purpose (price is using `int64`). [Check it here](https://github.com/yansetiaji/uhuy-service/blob/d57c744df458b48f01bcc9ca33956ec22ccaeb32/server.go#L15-L54)
+
+I made 2 version of get all products (paginated and non paginated), because it was no clear instruction on backend assignment (paginated or not)
+
+```go
+// Healthcheck endpoint
+e.GET("/health", func(c echo.Context) error {
+  return c.String(http.StatusOK, "")
+})
+
+// Create Product
+e.POST("/api/products", createProductHandler)
+
+// Get Product by ID
+e.GET("/api/products/:id", getProductByIdHandler)
+
+// Get All Products Non Paginated
+e.GET("/api/products-all", getAllProductsHandler)
+
+// Get All Products Pagination
+e.GET("/api/products", getAllProductsPaginationHandler)
+
+// Update Prodcut by ID
+e.PUT("/api/products/:id", updateProductHandler)
+
+// Delete Product by ID
+e.DELETE("/api/products/:id", deleteProductHandler)
+```
+
+And because I used different data model, we should convert it every user-server/server-user interaction
+
+```go
+// Data conversion model from ProductAPI to ProductDB
+func APItoDB(p *ProductAPI) ProductDB {
+  return ProductDB{
+    Id:          lastId,
+    Name:        p.Name,
+    Description: p.Description,
+    Price:       int64(p.Price * 100),
+  }
+}
+
+// Data conversion model from ProductDB to ProductAPI
+func DBtoAPI(p *ProductDB) ProductAPI {
+  return ProductAPI{
+    Id:          &p.Id,
+    Name:        p.Name,
+    Description: p.Description,
+    Price:       Decimal(float64(p.Price) / 100),  
+  }
+}
+```
